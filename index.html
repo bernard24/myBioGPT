@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bernardino Romera-Paredes</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      background-color: #f6f6f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .chat-container {
+      width: 100%;
+      max-width: 700px;
+      height: 80vh;
+      background: #ffffff;
+      border: 1px solid #e2e2e2;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .chat-header {
+      background: #ffffff;
+      border-bottom: 1px solid #e2e2e2;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      height: 56px;
+      font-size: 16px;
+      font-weight: 500;
+      color: #111;
+    }
+    .chat-body {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .chat-footer {
+      border-top: 1px solid #e2e2e2;
+      padding: 8px 16px;
+      background: #ffffff;
+      display: flex;
+      justify-content: space-between; /* left + right grouping */
+    }
+    .footer-left,
+    .footer-right {
+      display: flex;
+      gap: 8px;
+    }
+    .chat-footer button,
+    .chat-footer a {
+      background: #303136;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 12px;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none; /* for <a> */
+    }
+    .chat-footer button:hover,
+    .chat-footer a:hover {
+      background: #46474e;
+    }
+    .chat-footer svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+    .message {
+      max-width: 80%;
+      margin-bottom: 16px;
+      display: flex;
+      opacity: 0;
+      transition: opacity 0.1s ease;
+    }
+    .message.visible { opacity: 1; }
+    .assistant .bubble {
+      background: #f1f0f0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      position: relative;
+      font-size: 14px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+    .bubble .cursor {
+      display: inline-block;
+      width: 2px;
+      background: #555;
+      margin-left: 2px;
+      animation: blink 1s infinite;
+      vertical-align: bottom;
+      height: 1em;
+    }
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+    /* Scrollbar styling */
+    .chat-body::-webkit-scrollbar { width: 8px; }
+    .chat-body::-webkit-scrollbar-thumb { background-color: #c1c1c1; border-radius: 4px; }
+
+    /* Markdown defaults */
+    .bubble a { text-decoration: underline; }
+    .bubble code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.9em;
+      background: rgba(0,0,0,0.06);
+      padding: 0.1em 0.3em;
+      border-radius: 4px;
+    }
+    .bubble pre {
+      background: #eee;
+      padding: 10px;
+      border-radius: 8px;
+      overflow: auto;
+    }
+
+    /* Lists */
+    .bubble ul, .bubble ol { padding-left: 1.2em; }
+    .bubble ul > li, .bubble ol > li { list-style: none; }
+    .bubble ul > li.show-marker { list-style: disc outside; }
+    .bubble ol > li.show-marker { list-style: decimal outside; }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">Bernardino Romera-Paredes</div>
+    <div class="chat-body" id="chat-body">
+      <div class="message assistant visible" id="welcome-message">
+        <div class="bubble">Loading bio<span class="cursor"></span></div>
+      </div>
+    </div>
+    <div class="chat-footer">
+      <div class="footer-left">
+        <button id="regen-btn">
+          ↻ Try again
+        </button>
+      </div>
+      <div class="footer-right">
+        <a href="https://github.com/bernard24/myBioGPT" target="_blank" rel="noopener noreferrer">
+          <!-- Code / GitHub icon -->
+          <svg viewBox="0 0 24 24">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.39.6.11.82-.26.82-.58v-2.04c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.2.08 1.83 1.24 1.83 1.24 1.07 1.83 2.8 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.95 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 016 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.62-2.8 5.65-5.48 5.95.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          Source
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Markdown parser + sanitizer -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+
+  <script>
+    // Markdown -> safe HTML
+    function mdToSafeHtml(md) {
+      const raw = marked.parse(md, { gfm: true, breaks: true });
+      return DOMPurify.sanitize(raw, { ALLOWED_ATTR: ['href','title','target','rel','class'] });
+    }
+
+    // Make links open safely in a new tab
+    function hardenLinks(container) {
+      container.querySelectorAll('a').forEach(a => {
+        a.setAttribute('target', '_blank');
+        a.setAttribute('rel', 'noopener noreferrer');
+      });
+    }
+
+    // Find closest ancestor tag
+    function closestTag(el, tagName) {
+      tagName = tagName.toUpperCase();
+      while (el && el.nodeType === 1) {
+        if (el.tagName === tagName) return el;
+        el = el.parentElement;
+      }
+      return null;
+    }
+
+    // Render once, then reveal characters in-place.
+    // As soon as a character appears inside an <li>, we add .show-marker to that <li>.
+    function typeRevealMarkdown(bubble, md, done) {
+      const html = mdToSafeHtml(md);
+      bubble.innerHTML = html;
+      hardenLinks(bubble);
+
+      // Ensure we have a cursor
+      let cursor = bubble.querySelector('.cursor');
+      if (!cursor) {
+        cursor = document.createElement('span');
+        cursor.className = 'cursor';
+        bubble.appendChild(cursor);
+      }
+
+      // Collect all text nodes (skip whitespace-only)
+      const walker = document.createTreeWalker(bubble, NodeFilter.SHOW_TEXT, {
+        acceptNode(node) {
+          return node.nodeValue.trim().length ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+        }
+      });
+      const textNodes = [];
+      let n;
+      while ((n = walker.nextNode())) textNodes.push(n);
+
+      // Store originals and blank them
+      const originals = textNodes.map(t => t.nodeValue);
+      textNodes.forEach(t => t.nodeValue = '');
+
+      // Track which <li> have shown their first char
+      const revealedLis = new WeakSet();
+
+      function moveCursorAfter(node) {
+        const parent = node.parentNode;
+        if (cursor.parentNode !== parent) parent.appendChild(cursor);
+        parent.insertBefore(cursor, node.nextSibling);
+      }
+
+      // Typing speed profile
+      const burstMinSpeed = 2,  burstMaxSpeed = 15,  maxCharsInBurst = 3,  burstChance = 0.65;
+      const normalMinSpeed = 15, normalMaxSpeed = 50;
+      const minPunctuationPause = 60, maxPunctuationPause = 150;
+      const punctuation = ['.', ',', '!', '?', ';', ':'];
+      const thoughtfulPauseChance = 0.04, minThoughtfulPause = 50, maxThoughtfulPause = 120;
+
+      let nodeIdx = 0, charIdx = 0;
+
+      function typeNext() {
+        if (nodeIdx >= textNodes.length) {
+          cursor.remove();
+          if (done) done();
+          return;
+        }
+
+        const node = textNodes[nodeIdx];
+        const full = originals[nodeIdx];
+
+        // Burst or single char
+        let charsThisTurn = 1;
+        let minDelay = normalMinSpeed, maxDelay = normalMaxSpeed;
+        if (Math.random() < burstChance && (full.length - charIdx) >= 2) {
+          charsThisTurn = Math.random() < 0.6 ? 2 : maxCharsInBurst;
+          charsThisTurn = Math.min(charsThisTurn, full.length - charIdx);
+          minDelay = burstMinSpeed; maxDelay = burstMaxSpeed;
+        }
+
+        const chunk = full.slice(charIdx, charIdx + charsThisTurn);
+        const wasEmptyBefore = node.nodeValue.length === 0;
+
+        node.nodeValue += chunk;
+        charIdx += chunk.length;
+
+        // If this text node lives inside an <li> and we just added the first visible char,
+        // reveal that item's marker now.
+        if (wasEmptyBefore && node.nodeValue.length > 0) {
+          const li = closestTag(node.parentElement, 'LI');
+          if (li && !revealedLis.has(li)) {
+            revealedLis.add(li);
+            // Turn on marker for this specific <li>
+            li.classList.add('show-marker');
+            // Decide bullet type based on parent list
+            const parentList = closestTag(li.parentElement, 'UL') || closestTag(li.parentElement, 'OL');
+            if (parentList && parentList.tagName === 'OL') {
+              li.style.listStyle = 'decimal outside';
+            } else {
+              li.style.listStyle = 'disc outside';
+            }
+          }
+        }
+
+        moveCursorAfter(node);
+
+        let delay = Math.random() * (maxDelay - minDelay) + minDelay;
+        const lastChar = chunk.slice(-1);
+        if (charIdx < full.length && punctuation.includes(lastChar)) {
+          delay += Math.random() * (maxPunctuationPause - minPunctuationPause) + minPunctuationPause;
+        } else if (Math.random() < thoughtfulPauseChance && charsThisTurn < maxCharsInBurst) {
+          delay += Math.random() * (maxThoughtfulPause - minThoughtfulPause) + minThoughtfulPause;
+        }
+
+        if (charIdx >= full.length) {
+          nodeIdx += 1;
+          charIdx = 0;
+        }
+
+        setTimeout(typeNext, delay);
+      }
+
+      typeNext();
+    }
+
+    // --- Manifest + UI wiring ---
+    let bioFiles = [];
+    const bioCache = new Map();
+
+    function resolveUrl(path) {
+      return new URL(path, document.baseURI).href;
+    }
+
+    async function loadManifest() {
+      if (bioFiles.length) return bioFiles;
+      const manifestUrl = resolveUrl('./bios/manifest.json');
+      const res = await fetch(manifestUrl, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`Manifest HTTP ${res.status} ${res.statusText}`);
+      const data = await res.json();
+      if (!Array.isArray(data) || data.length === 0) throw new Error('manifest.json invalid');
+      bioFiles = data;
+      return bioFiles;
+    }
+
+    async function getRandomBioMd() {
+      const files = await loadManifest();
+      const file = files[Math.floor(Math.random() * files.length)];
+      const url = resolveUrl(file);
+      if (bioCache.has(url)) return bioCache.get(url);
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`Bio HTTP ${res.status} ${res.statusText}`);
+      const text = await res.text();
+      bioCache.set(url, text);
+      return text;
+    }
+
+    const fallbackBios = [
+      'Hello! **Markdown** fallback bio. See my [site](https://example.com).\n\n- Bullet A\n- Bullet B\n- Bullet C'
+    ];
+    async function getBioSafe() {
+      try { return await getRandomBioMd(); }
+      catch (err) { console.error(err); return fallbackBios[0]; }
+    }
+
+    async function showMessage() {
+      const chatBody = document.getElementById('chat-body');
+      const regenBtn = document.getElementById('regen-btn');
+      regenBtn.disabled = true;
+
+      chatBody.innerHTML = '';
+
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'message assistant';
+
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+
+      const cursorSpan = document.createElement('span');
+      cursorSpan.className = 'cursor';
+      bubble.appendChild(cursorSpan);
+
+      msgDiv.appendChild(bubble);
+      chatBody.appendChild(msgDiv);
+      chatBody.scrollTop = chatBody.scrollHeight;
+
+      setTimeout(async () => {
+        msgDiv.classList.add('visible');
+        try {
+          const bioMd = await getBioSafe();
+          await new Promise(resolve => {
+            typeRevealMarkdown(bubble, bioMd, () => {
+              chatBody.scrollTop = chatBody.scrollHeight;
+              resolve();
+            });
+          });
+        } catch (err) {
+          bubble.innerHTML = `Could not load bio. <code>${String(err.message || err)}</code>`;
+        } finally {
+          regenBtn.disabled = false;
+        }
+      }, 10);
+    }
+
+    window.addEventListener('load', async () => {
+      const welcome = document.getElementById('welcome-message');
+      setTimeout(async () => {
+        if (welcome) {
+          welcome.classList.remove('visible');
+          setTimeout(async () => {
+            if (welcome) welcome.remove();
+            await showMessage();
+          }, 100);
+        } else {
+          await showMessage();
+        }
+      }, 300);
+
+      document.getElementById('regen-btn').addEventListener('click', showMessage);
+    });
+  </script>
+</body>
+</html>
